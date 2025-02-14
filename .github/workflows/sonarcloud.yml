@@ -41,10 +41,13 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v1
         with:
           args: |
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
-            -Dsonar.organization=${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
-            -Dsonar.sources=.  # Path to your source files (default is the root directory)
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}  
+            -Dsonar.sources=.
+            projectBaseDir: .
+            
         env:
+          DOTNET_ROOT: /usr/share/dotnet
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           
       # Run unit tests (optional, but recommended)
