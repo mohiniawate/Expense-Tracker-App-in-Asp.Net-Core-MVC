@@ -43,9 +43,10 @@ jobs:
           args: |
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
             -Dsonar.organization=${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}  # Replace with your SonarCloud token stored in GitHub secrets
             -Dsonar.sources=.  # Path to your source files (default is the root directory)
-
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          
       # Run unit tests (optional, but recommended)
       - name: Run unit tests
         run: dotnet test --configuration Release --no-build
@@ -57,9 +58,9 @@ jobs:
           args: |
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
             -Dsonar.organization=${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}  # Replace with your SonarCloud token stored in GitHub secrets
             -Dsonar.sources=.  # Path to your source files (default is the root directory)
-            
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
   sonarcloud-initial-setup:
     runs-on: ubuntu-latest
 
