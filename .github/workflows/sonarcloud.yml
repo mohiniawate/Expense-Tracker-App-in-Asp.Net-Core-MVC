@@ -33,7 +33,7 @@ jobs:
       - name: Set JAVA_HOME
         run: echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
 
-      # Set up .NET
+      # Set up .NET (if using .NET)
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
@@ -47,14 +47,15 @@ jobs:
       - name: Build the project
         run: dotnet build --configuration Release
 
-      # Run SonarCloud analysis with Java 17
+      # Run SonarCloud Scan with explicit Java version
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         with:
           args: |
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ secrets.SONAR_ORG }}  
-            -Dsonar.sources=.            
+            -Dsonar.sources=.   
+            -X
         env:
           DOTNET_ROOT: /usr/share/dotnet
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -74,25 +75,3 @@ jobs:
             -Dsonar.sources=.  # Path to your source files (default is the root directory)
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  sonarcloud-initial-setup:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Install SonarCloud Scanner
-        run: |
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip 
-          sudo apt-get install unzip
-          sudo unzip sonar-scanner-cli-6.2.1.4610-linux-x64.zip
-          sudo mv sonar-scanner-cli-6.2.1.4610-linux-x64 /opt/sonar-scanner
-          echo 'export PATH=$PATH:/opt/sonar-scanner/bin' >> ~/.bashrc
-          source ~/.bashrc
-          sonar-scanner --version
-
-      - name: SonarCloud authentication
-        run: |
-          echo ${{ secrets.SONAR_TOKEN }} > sonar_token.txt
-          sonar-scanner -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=${{ secrets.SONAR_ORG }} -Dsonar.login=$(cat sonar_token.txt)
-          
-      - name: Clean up
-        run: rm sonar_token.txt
