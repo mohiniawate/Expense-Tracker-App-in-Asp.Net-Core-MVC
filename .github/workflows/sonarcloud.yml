@@ -40,10 +40,10 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         with:
-          organization: ${{ mohini awate }}  # Replace with your SonarCloud organization name
-          token: ${{ 7c8931d8b6069799d438645c97d0ffa2fdf9b51b }}  # Store SonarCloud token in GitHub secrets
-          projectKey: ${{ mohiniawate_Expense-Tracker-App-in-Asp.Net-Core-MVC }}  # Replace with your SonarCloud project key
-          projectName: ${{ Expense-Tracker-App-in-Asp.Net-Core-MVC }}  # Replace with your SonarCloud project name
+          organization: ${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
+          token: ${{ secrets.SONAR_TOKEN }}  # Store SonarCloud token in GitHub secrets
+          projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
+          projectName: ${{ secrets.SONAR_PROJECT_NAME }}  # Replace with your SonarCloud project name
 
       # Run unit tests (optional, but recommended)
       - name: Run unit tests
@@ -53,10 +53,10 @@ jobs:
       - name: Publish SonarCloud results
         uses: SonarSource/sonarcloud-github-action@v1
         with:
-          organization: ${{ mohini awate }}  # Replace with your SonarCloud organization name
-          token: ${{ 7c8931d8b6069799d438645c97d0ffa2fdf9b51b }}  # SonarCloud token stored in GitHub secrets
-          projectKey: ${{ mohiniawate_Expense-Tracker-App-in-Asp.Net-Core-MVC }}  # Replace with your SonarCloud project key
-          projectName: ${{ Expense-Tracker-App-in-Asp.Net-Core-MVC }}  # Replace with your SonarCloud project name
+          organization: ${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
+          token: ${{ secrets.SONAR_TOKEN   }}  # SonarCloud token stored in GitHub secrets
+          projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
+          projectName: ${{ secrets.SONAR_PROJECT_NAME }}  # Replace with your SonarCloud project name
 
   sonarcloud-initial-setup:
     runs-on: ubuntu-latest
@@ -70,8 +70,8 @@ jobs:
 
       - name: SonarCloud authentication
         run: |
-          echo ${{ 7c8931d8b6069799d438645c97d0ffa2fdf9b51b }} > sonar_token.txt
-          sonar-scanner -Dsonar.projectKey=${{ mohiniawate_Expense-Tracker-App-in-Asp.Net-Core-MVC }} -Dsonar.organization=${{ mohiniawate }} -Dsonar.login=$(cat sonar_token.txt)
+          echo ${{ secrets.SONAR_TOKEN }} > sonar_token.txt
+          sonar-scanner -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=${{ secrets.SONAR_ORG }} -Dsonar.login=$(cat sonar_token.txt)
           
       - name: Clean up
         run: rm sonar_token.txt
