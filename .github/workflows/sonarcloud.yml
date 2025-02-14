@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'zulu'  # or 'zulu', 'amazon', etc.
+          distribution: 'zulu'  # or 'adoptopenjdk', 'amazon', etc.
           architecture: x64 
 
       # Set up .NET
@@ -44,8 +44,8 @@ jobs:
       - name: Build the project
         run: dotnet build --configuration Release
 
-      # Run SonarCloud analysis
-      - name: SonarCloud Scan
+      # Run SonarCloud analysis with Java 17
+      - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         with:
           args: |
@@ -55,7 +55,8 @@ jobs:
         env:
           DOTNET_ROOT: /usr/share/dotnet
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          
+          JAVA_HOME: /opt/hostedtoolcache/Java_Zulu_jdk/17.0.14-7/x64  # Set Java 17 explicitly
+
       # Run unit tests (optional, but recommended)
       - name: Run unit tests
         run: dotnet test --configuration Release --no-build
@@ -69,7 +70,8 @@ jobs:
             -Dsonar.organization=${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
             -Dsonar.sources=.  # Path to your source files (default is the root directory)
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   sonarcloud-initial-setup:
     runs-on: ubuntu-latest
 
@@ -83,7 +85,6 @@ jobs:
           echo 'export PATH=$PATH:/opt/sonar-scanner/bin' >> ~/.bashrc
           source ~/.bashrc
           sonar-scanner --version
-          #sudo ln -s /opt/sonar-scanner-cli-7.0.1.4817-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner
 
       - name: SonarCloud authentication
         run: |
