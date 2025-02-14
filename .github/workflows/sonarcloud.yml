@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'amazon'  # or 'zulu', 'amazon', etc.
+          distribution: 'zulu'  # or 'zulu', 'amazon', etc.
           architecture: x64 
 
       # Set up .NET
