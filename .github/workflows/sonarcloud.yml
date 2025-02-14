@@ -40,10 +40,11 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         with:
-          organization: ${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
-          token: ${{ secrets.SONAR_TOKEN }}  # Store SonarCloud token in GitHub secrets
-          projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
-          projectName: ${{ secrets.SONAR_PROJECT_NAME }}  # Replace with your SonarCloud project name
+          args: |
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}  # Replace with your SonarCloud token stored in GitHub secrets
+            -Dsonar.sources=.  # Path to your source files (default is the root directory)
 
       # Run unit tests (optional, but recommended)
       - name: Run unit tests
@@ -53,11 +54,12 @@ jobs:
       - name: Publish SonarCloud results
         uses: SonarSource/sonarcloud-github-action@v1
         with:
-          organization: ${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
-          token: ${{ secrets.SONAR_TOKEN   }}  # SonarCloud token stored in GitHub secrets
-          projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
-          projectName: ${{ secrets.SONAR_PROJECT_NAME }}  # Replace with your SonarCloud project name
-
+          args: |
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}  # Replace with your SonarCloud token stored in GitHub secrets
+            -Dsonar.sources=.  # Path to your source files (default is the root directory)
+            
   sonarcloud-initial-setup:
     runs-on: ubuntu-latest
 
