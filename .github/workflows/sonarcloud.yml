@@ -64,9 +64,14 @@ jobs:
     steps:
       - name: Install SonarCloud Scanner
         run: |
-          curl -sSLo /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.0.1.4817-linux.zip
-          sudo unzip /tmp/sonar-scanner.zip -d /opt
-          sudo ln -s /opt/sonar-scanner-cli-7.0.1.4817-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip 
+          sudo apt-get install unzip
+          sudo unzip sonar-scanner-cli-6.2.1.4610-linux-x64.zip
+          sudo mv sonar-scanner-cli-6.2.1.4610-linux-x64 /opt/sonar-scanner
+          echo 'export PATH=$PATH:/opt/sonar-scanner/bin' >> ~/.bashrc
+          source ~/.bashrc
+          sonar-scanner -v
+          #sudo ln -s /opt/sonar-scanner-cli-7.0.1.4817-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner
 
       - name: SonarCloud authentication
         run: |
