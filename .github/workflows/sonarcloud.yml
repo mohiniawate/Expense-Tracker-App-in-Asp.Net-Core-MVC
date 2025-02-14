@@ -1,0 +1,77 @@
+name: SonarCloud Analysis
+
+on:
+  push:
+    branches:
+      - main  # This can be your default branch or any other branch
+  pull_request:
+    branches:
+      - main  # Adjust as per your needs
+  workflow_dispatch:  # Allows manual triggering
+
+permissions:
+  pull-requests: read  # Allows SonarCloud to decorate PRs with analysis results
+
+jobs:
+  build:
+    name: Build and Analyze with SonarCloud
+    runs-on: ubuntu-latest  # Use 'windows-latest' if you need a Windows runner
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up .NET
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.x'  # Adjust to the .NET version you're using (e.g., '6.x', '7.x')
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Build the project
+      - name: Build the project
+        run: dotnet build --configuration Release
+
+      # Run SonarCloud analysis
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v1
+        with:
+          organization: ${{ mohini awate }}  # Replace with your SonarCloud organization name
+          token: ${{ 7c8931d8b6069799d438645c97d0ffa2fdf9b51b }}  # Store SonarCloud token in GitHub secrets
+          projectKey: ${{ mohiniawate_Expense-Tracker-App-in-Asp.Net-Core-MVC }}  # Replace with your SonarCloud project key
+          projectName: ${{ Expense-Tracker-App-in-Asp.Net-Core-MVC }}  # Replace with your SonarCloud project name
+
+      # Run unit tests (optional, but recommended)
+      - name: Run unit tests
+        run: dotnet test --configuration Release --no-build
+
+      # Publish SonarCloud results
+      - name: Publish SonarCloud results
+        uses: SonarSource/sonarcloud-github-action@v1
+        with:
+          organization: ${{ mohini awate }}  # Replace with your SonarCloud organization name
+          token: ${{ 7c8931d8b6069799d438645c97d0ffa2fdf9b51b }}  # SonarCloud token stored in GitHub secrets
+          projectKey: ${{ mohiniawate_Expense-Tracker-App-in-Asp.Net-Core-MVC }}  # Replace with your SonarCloud project key
+          projectName: ${{ Expense-Tracker-App-in-Asp.Net-Core-MVC }}  # Replace with your SonarCloud project name
+
+  sonarcloud-initial-setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install SonarCloud Scanner
+        run: |
+          curl -sSLo /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.0.1.4817-linux.zip
+          sudo unzip /tmp/sonar-scanner.zip -d /opt
+          sudo ln -s /opt/sonar-scanner-cli-7.0.1.4817-linux/bin/sonar-scanner /usr/local/bin/sonar-scanner
+
+      - name: SonarCloud authentication
+        run: |
+          echo ${{ 7c8931d8b6069799d438645c97d0ffa2fdf9b51b }} > sonar_token.txt
+          sonar-scanner -Dsonar.projectKey=${{ mohiniawate_Expense-Tracker-App-in-Asp.Net-Core-MVC }} -Dsonar.organization=${{ mohiniawate }} -Dsonar.login=$(cat sonar_token.txt)
+          
+      - name: Clean up
+        run: rm sonar_token.txt
