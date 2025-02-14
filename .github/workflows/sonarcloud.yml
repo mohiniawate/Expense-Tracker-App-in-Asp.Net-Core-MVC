@@ -24,10 +24,15 @@ jobs:
         
       #install java 17  
       - name: Set up JDK 17
-        uses: sonarsource/sonarcloud-github-c-cpp@v2
-        with:
-          java-version: 17
-          
+        run: |
+          sudo apt-get update
+          sudo apt-get remove --purge openjdk-11-*
+          sudo apt-get autoremove
+          java -version
+          sudo apt-get install -y openjdk-17-jdk
+          sudo update-alternatives --config java
+
+          java -version
           
       # Set JAVA_HOME to Java 17
       - name: Set JAVA_HOME
