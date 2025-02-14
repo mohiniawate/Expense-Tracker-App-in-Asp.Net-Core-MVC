@@ -43,9 +43,7 @@ jobs:
           args: |
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ secrets.SONAR_ORG }}  
-            -Dsonar.sources=.
-            projectBaseDir: .
-            
+            -Dsonar.sources=.            
         env:
           DOTNET_ROOT: /usr/share/dotnet
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
