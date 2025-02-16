@@ -36,6 +36,10 @@ jobs:
       - name: Build the project
         run: dotnet build --configuration Release
 
+       # Install coverlet tool
+      - name: Install coverlet tool
+        run: dotnet tool install --global coverlet.console
+
        # Run tests and generate code coverage report in Cobertura format
       - name: Run tests with coverage
         run: |
