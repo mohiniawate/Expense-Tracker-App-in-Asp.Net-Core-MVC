@@ -52,31 +52,18 @@ jobs:
       - name: Build the project
         run: dotnet build --configuration Release
 
-      # Run SonarCloud Scan with explicit Java version
       - name: Run SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         with:
-          args: |
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ secrets.SONAR_ORG }}  
-            -Dsonar.sources=.   
-            -X
+          organization: ${{ secrets.SONAR_ORG }}  # Your SonarCloud organization
+          projectKey: ${{ secrets.SONAR_PROJECT_KEY }}  # Your SonarCloud project key
+          projectName: 'Expense-Tracker-App-in-Asp.Net-Core-MVC'  # Project name in SonarCloud
         env:
-          DOTNET_ROOT: /usr/share/dotnet
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64  # Set Java 17 explicitly
-
-      # Run unit tests (optional, but recommended)
-      - name: Run unit tests
-        run: dotnet test --configuration Release --no-build
-
-      # Publish SonarCloud results
-      - name: Publish SonarCloud results
-        uses: SonarSource/sonarcloud-github-action@v1
-        with:
-          args: |
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}  # Replace with your SonarCloud project key
-            -Dsonar.organization=${{ secrets.SONAR_ORG }}  # Replace with your SonarCloud organization name
-            -Dsonar.sources=.  # Path to your source files (default is the root directory)
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Your SonarCloud token (stored as a secret)
+          
+      - name: Publish code coverage results
+        if: success() && github.event_name == 'push'
+        run: |
+          #This is optional and should only be included if you're generating code coverage reports.
+          dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage"
+          bash <(curl -s https://codecov.io/bash)
