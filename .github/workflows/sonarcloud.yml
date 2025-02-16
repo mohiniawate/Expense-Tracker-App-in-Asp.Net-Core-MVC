@@ -21,22 +21,6 @@ jobs:
       # Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
-        
-      #install java 17  
-      - name: Set up JDK 17
-        run: |
-          sudo apt-get update
-          sudo apt-get remove --purge openjdk-11-*
-          sudo apt-get autoremove
-          java -version
-          sudo apt-get install -y openjdk-17-jdk
-          sudo update-alternatives --config java
-
-          java -version
-          
-      # Set JAVA_HOME to Java 17
-      - name: Set JAVA_HOME
-        run: echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
 
       # Set up .NET (if using .NET)
       - name: Set up .NET
