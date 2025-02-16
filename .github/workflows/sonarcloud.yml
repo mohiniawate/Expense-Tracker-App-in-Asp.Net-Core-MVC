@@ -43,9 +43,9 @@ jobs:
        # Run tests and generate code coverage report in Cobertura format
       - name: Run tests with coverage
         run: |
-         dotnet test --configuration Release --collect:"XPlat Code Coverage"
-         COVERAGE_OUTPUT=$(find ./bin -type d -name "net*/")
-         coverlet $COVERAGE_OUTPUT/Expense-Tracker-App-in-Asp.Net-Core-MVC.dll --target "dotnet" --targetargs "test ./Expense-Tracker-App-in-Asp.Net-Core-MVC.csproj" --format cobertura --output ./coverage.cobertura.xml
+          dotnet test --configuration Release --collect:"XPlat Code Coverage" --logger:"trx;LogFileName=test_results.trx"
+          COVERAGE_OUTPUT="./bin/Release/net7.0"  # Adjust this based on your .NET version
+          coverlet $COVERAGE_OUTPUT/Expense-Tracker-App-in-Asp.Net-Core-MVC.dll --target "dotnet" --targetargs "test ./Expense-Tracker-App-in-Asp.Net-Core-MVC.csproj" --format cobertura --output ./coverage.cobertura.xml
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
