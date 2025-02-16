@@ -45,7 +45,7 @@ jobs:
         run: |
           dotnet test --configuration Release --collect:"XPlat Code Coverage"
           # Convert coverage to cobertura format
-          coverlet ./bin/Release/net6.0/YourProjectName.dll --target "dotnet" --targetargs "test ./YourProjectName.csproj" --format cobertura --output ./coverage.cobertura.xml
+          coverlet ./bin/Release/net6.0/Expense-Tracker-App-in-Asp.Net-Core-MVC.dll --target "dotnet" --targetargs "test ./Expense-Tracker-App-in-Asp.Net-Core-MVC.csproj" --format cobertura --output ./coverage.cobertura.xml
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
