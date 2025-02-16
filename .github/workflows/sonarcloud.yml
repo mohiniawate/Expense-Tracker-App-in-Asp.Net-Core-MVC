@@ -32,9 +32,13 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      # Build the project
+        
       - name: Build the project
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --framework net7.0  
+        
+      # Build the project
+     # - name: Build the project
+      #  run: dotnet build --configuration Release
 
        # Install coverlet tool
       - name: Install coverlet tool
@@ -44,8 +48,8 @@ jobs:
       - name: Run tests with coverage
         run: |
           dotnet test --configuration Release --collect:"XPlat Code Coverage"
-          # Convert coverage to cobertura format
-          coverlet ./bin/Release/net6.0/Expense-Tracker-App-in-Asp.Net-Core-MVC.dll --target "dotnet" --targetargs "test ./Expense-Tracker-App-in-Asp.Net-Core-MVC.csproj" --format cobertura --output ./coverage.cobertura.xml
+          COVERAGE_OUTPUT=$(find ./bin -type d -name "net*/")
+          coverlet $COVERAGE_OUTPUT/Expense-Tracker-App-in-Asp.Net-Core-MVC.dll --target "dotnet" --targetargs "test ./Expense-Tracker-App-in-Asp.Net-Core-MVC.csproj" --format cobertura --output ./coverage.cobertura.xml
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
