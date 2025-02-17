@@ -3,18 +3,18 @@ name: SonarCloud Analysis
 on:
   push:
     branches:
-      - main  # This can be your default branch or any other branch
+      - main  # Adjust to your default branch
   pull_request:
     branches:
-      - main  # Adjust as per your needs
+      - main  # Adjust as needed
   workflow_dispatch:  # Allows manual triggering
 
 permissions:
   pull-requests: read  # Allows SonarCloud to decorate PRs with analysis results
 
 jobs:
-  build:
-    name: Build and Analyze with SonarCloud
+  analyze:
+    name: Analyze with SonarCloud
     runs-on: ubuntu-latest  # Use 'windows-latest' if you need a Windows runner
 
     steps:
@@ -26,34 +26,50 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.x'  # Adjust to the .NET version you're using (e.g., '6.x', '7.x')
+          dotnet-version: '7.x'  # Adjust to your .NET version
 
       # Restore dependencies
       - name: Restore dependencies
         run: dotnet restore
-        
-      #Build the project
-      - name: Build the project
-        run: dotnet build --configuration Release
 
-       # Install coverlet tool
-      - name: Install coverlet tool
-        run: dotnet tool install --global coverlet.console
+      # Run tests and generate code coverage report in Cobertura format
+      - name: Run tests with coverage
+        run: |
+          dotnet test --configuration Release --collect:"XPlat Code Coverage" --logger:"trx;LogFileName=test_results.trx"
+          COVERAGE_OUTPUT="./bin/Release/net7.0"  # Adjust based on your .NET version
+          coverlet $COVERAGE_OUTPUT/YourProject.dll --target "dotnet" --targetargs "test ./YourProject.csproj" --format cobertura --output ./coverage.cobertura.xml
 
-       # Run tests and generate code coverage report in Cobertura format
-      #- name: Run tests with coverage
-       # run: |
-        #  dotnet test --configuration Release --collect:"XPlat Code Coverage" --logger:"trx;LogFileName=test_results.trx"
-         # COVERAGE_OUTPUT="./bin/Release/net7.0"  # Adjust this based on your .NET version
-         # coverlet $COVERAGE_OUTPUT/Expense-Tracker-App-in-Asp.Net-Core-MVC.dll --target "dotnet" --targetargs "test ./Expense-Tracker-App-in-Asp.Net-Core-MVC.csproj" --format cobertura --output ./coverage.cobertura.xml
-
+      # SonarCloud Scan
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
-#            GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-              -Dsonar.organization=${{ secrets.SONAR_ORG }}
-              -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-              -Dsonar.dotnet.coverage.reportPaths=coverage.cobertura.xml
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.dotnet.coverage.reportPaths=coverage.cobertura.xml
+
+  build:
+    name: Build the project
+    runs-on: ubuntu-latest  # Use 'windows-latest' if you need a Windows runner
+    needs: analyze  # Ensures this job runs after the analyze job
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up .NET (if using .NET)
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.x'  # Adjust to your .NET version
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Build the project
+      - name: Build the project
+        run: dotnet build --configuration Release
